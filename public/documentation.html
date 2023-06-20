@@ -1,20 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>myFlix</title>
 </head>
+
 <body>
+
    <head>
       <h1>myFlix API</h1>
    </head>
    <p>
-      This API is designed to provide a user with an interface for discovering movie information. The API is currently hosted on a local server. 
-      The user will be able to search for information regarding movies, directors, and genres. Not only will users be able to seach for movie 
-      information, but they will also be able to create their own profiles. These profiles allow the user to save information about their 
+      This API is designed to provide a user with an interface for discovering movie information. The API is currently
+      hosted on a local server.
+      The user will be able to search for information regarding movies, directors, and genres. Not only will users be
+      able to seach for movie
+      information, but they will also be able to create their own profiles. These profiles allow the user to save
+      information about their
       favorite movies so they may log in to an account and reference what they saved.
    </p>
+
+   <table>
+      <thead>
+         <tr>
+            <th>Request</th>
+            <th>URL</th>
+            <th>HTTP Method</th>
+            <th>Query Parameters</th>
+            <th>Request body data format</th>
+            <th>Response body data format</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+            <td>Returns list of all movies</td>
+            <td>/movies</td>
+            <td>GET</td>
+            <td>None</td>
+            <td>None</td>
+            <td>JSON object of all users in the array</td>
+         </tr>
+         <tr>
+            <td>Return data about a single movie by title</td>
+            <td>/movies/:title</td>
+            <td>GET</td>
+            <td>:title</td>
+            <td>None</td>
+            <td>JSON object of a single movie</td>
+         </tr>
+         <tr>
+            <td>Return data about a genre by style</td>
+            <td>/movies/genres/:name</td>
+            <td>GET</td>
+            <td>:style</td>
+            <td>None</td>
+            <td>A text message providing the description of the genre</td>
+         </tr>
+         <tr>
+            <td>Return data about director by name</td>
+            <td>/movies/:director</td>
+            <td>GET</td>
+            <td>:director</td>
+            <td>None</td>
+            <td>JSON object of information available for a specific director</td>
+         </tr>
+         <tr>
+            <td>Allow users to register</td>
+            <td>/users</td>
+            <td>POST</td>
+            <td>None</td>
+            <td>A JSON object containing data regarding a new user</td>
+            <td>A JSON object containing the new data from the request</td>
+         </tr>
+         <tr>
+            <td>Allow users to update user info</td>
+            <td>/users/:name/:email</td>
+            <td>PUT</td>
+            <td>:name, :email</td>
+            <td>None</td>
+            <td>Text confirming the updated information about the user</td>
+         </tr>
+         <tr>
+            <td>Allow users to add a movie to favorites</td>
+            <td>/users/:name/movies</td>
+            <td>POST</td>
+            <td>:name</td>
+            <td>A JSON object listing the new movie and information about movie</td>
+            <td>A JSON object containing the movies saved by the user</td>
+         </tr>
+         <tr>
+            <td>Allow users to remove a movie from favorites by title</td>
+            <td>/users/:name/movies/:title</td>
+            <td>DELETE</td>
+            <td>:name, :title</td>
+            <td>None</td>
+            <td>A text confirming the movie was removed</td>
+         </tr>
+         <tr>
+            <td>Allow existing users to deregister by name</td>
+            <td>/users/:name</td>
+            <td>DELETE</td>
+            <td>:name</td>
+            <td>None</td>
+            <td>A text confirming the user has be removed</td>
+         </tr>
+      </tbody>
+   </table>
 </body>
+
 </html>
