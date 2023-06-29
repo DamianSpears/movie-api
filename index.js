@@ -1,115 +1,21 @@
-let express = require('express'),
+let express = require('express');
    //ONLY imports the express module into the js file
-   app = express(),
+const app = express();
    //declares a variable that calls Express' functionality to configure the web server
-   morgan = require('morgan'),
-   bodyParser = require('body-parser'),
-   uuid = require('uuid');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const uuid = require('uuid');
+const mongoose =require('mongoose');
+const Models = require('./models.js');
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(bodyParser.json());
 
-let users = [
-   {
-      id: 1234,
-      name: 'Damian',
-      email: 'example@me.com',
-      movies: {
-         title: 'Tenet',
-         director: 'Christopher Nolan',
-         genre: {
-            style: 'Action',
-            description: 'fast-paced and include a lot of action like fight scenes, chase scenes, and slow-motion shots. They can feature superheroes, martial arts, or exciting stunts.'
-         }
-      },
-   }
-];
-
-let topMovies = [
-   {
-      title: 'Tenet',
-      director: 'Christopher Nolan',
-      genre: {
-         style: 'Action',
-         description: 'fast-paced and include a lot of action like fight scenes, chase scenes, and slow-motion shots. They can feature superheroes, martial arts, or exciting stunts.'
-      }
-   },
-   {
-      title: 'Inception',
-      director: 'Chrisopher Nolan',
-      genre: {
-         style: 'Action',
-         description: 'fast-paced and include a lot of action like fight scenes, chase scenes, and slow-motion shots. They can feature superheroes, martial arts, or exciting stunts.'
-      }
-   },
-   {
-      title: 'Reservoir Dogs',
-      director: 'Quentin Tarantino',
-      genre: {
-         style: 'Crime',
-         description: 'Most crime drama focuses on crime investigation and does not feature the courtroom. Suspense and mystery are key elements that are nearly ubiquitous to the genre.'
-      }
-   },
-   {
-      title: 'Django Unchained',
-      director: 'Quentin Tarantino',
-      genre: {
-         style: 'Western',
-         description: 'Movies that are set in the American West, usually in the period from the 1850s to the end of the 19th century.'
-      }
-   },
-   {
-      title: 'The Grand Budapest Hotel',
-      director: 'Wes Anderson',
-      genre: {
-         style: 'Drama',
-         description: 'Stories with high stakes and many conflicts. They are plot-driven and demand that every character and scene move the story forward.'
-      }
-   },
-   {
-      title: 'Pulp Fiction',
-      director: 'Quentin Tarantino',
-      genre: {
-         style: 'Comedy',
-         description: 'Films designed to elicit laughter from the audience. Comedies are light-hearted dramas, crafted to amuse, entertain, and provoke enjoyment'
-      }
-   },
-   {
-      title: 'Mad MAx: Fury Road',
-      director: 'George Miller',
-      genre: {
-         style: 'Science Fiction',
-         description: 'genre of speculative fiction, which typically deals with imaginative and futuristic concepts such as advanced science and technology, space exploration, time travel, parallel universes, and extraterrestrial life'
-      }
-   },
-   {
-      title: 'Inception',
-      director: 'Christopher Nolan',
-      genre: {
-         style: 'Science Fiction',
-         description: 'Speculative films, which typically deals with imaginative and futuristic concepts such as advanced science and technology, space exploration, time travel, parallel universes, and extraterrestrial life'
-      }
-   },
-   {
-      title: 'Goodfellas',
-      director: 'Martin Scorsese',
-      genre: {
-         style:'Crime',
-         description: 'Most crime drama focuses on crime investigation and does not feature the courtroom. Suspense and mystery are key elements that are nearly ubiquitous to the genre.'
-      }
-   },
-   {
-      title: 'Shutter Island',
-      director: 'Shutter Island',
-      genre: {
-         style: 'Thriller',
-         description: 'Thrillers are characterized and defined by the moods they elicit, giving their audiences heightened feelings of suspense, excitement, surprise, anticipation and anxiety.'
-      }
-   }
-];
-
 app.use(morgan('common'));
 //utilizes morgan to log information to the terminal.
-
 
 //Welcome with the home route
 app.get('/', (req, res) => {
@@ -117,61 +23,185 @@ app.get('/', (req, res) => {
 });
 
 //1.  Return list of all movies
-app.get('/movies', (req, res) => {
-   res.json(topMovies);
+app.get('/Movies', (req, res) => {
+   Movies.find()
+      .then((movies) => {
+         res.status(200).json(movies);
+      })
+      .catch((err) => {
+         console.error(err);
+         res.status(500).send('Error' + err)
+      })
 });
 
 //2.  Return data about a single movie by title
-app.get('/movies/:title', (req, res) => {
-   res.json(topMovies.find((movie) => {
-      return movie.title === req.params.title}))
+app.get('/movies/:Title', (req, res) => {
+   Movies.findOne({Title: req.params.Title})
+      .then((movie) => {
+         res.status(200).json(movie)
+      })
+      .catch((err) => {
+         res.status(500).send('Error ' + err)
+      })
    });
 //^ The .find is looping through the topMovies array and will only return the instance that matches the request parameters ()
 
 //3.  Return data about a genre by style
-app.get('movies/genre/:style', (req, res) => {
-   let movie = topMovies.find((movie) => {
-      return movie.genre === req.params.genre})
-   if (movie) {
-      res.status(201).send(req.params.genre)
-   }});
+app.get('/movies/Genre/:Style', (req, res) => {
+   Movies.find({'Genre.Style': req.params.Style })
+      .then((movie) => {
+         if(movie.length == 0) {
+            res.status(404).send('Error')
+         } else {
+               res.status(200).json(movie)
+         }
+      })
+      .catch((err) => {
+         console.error(err);
+         res.status(500).send('Error: ' + err)
+      });
+});
 //^ The find loop uses an 'if' statement in order to return both the style and description under the 'genre' property
 //If I did not include an 'if' statement, the function would only return the style, and not both properties under 'genre'
 
 //4.  Return data about a director by name
 app.get('/movies/:director', (req, res) => {
-   res.send('Successful GET request returning data about a director')});
+   Movies.find({Director: req.params.director})
+      .then((director) => {
+         if(director) {
+            res.status(200).json(director)
+         } else {
+            res.status(404).send('Error')
+         }
+      })
+      .catch((err) => {
+         console.error(err);
+         res.status(500).send('Error: ' + err)
+      });
+   });
 //^Remember, request parameters in the return statement must match the defined URL endpoint
 
-//5.  Allow users to register
+//5.  Uses an HTTP request to collect info, populate the 'user' document, then adds to the non-relational database
 app.post('/users', (req, res) => {
-   res.send('Successful POST request allowing users to enter information in a JSON format')});
+   Users.findOne({ Username: req.body.Username }) //findOne searches to make sure username does not already exist in the "users" model
+      .then((user) => {
+         if (user) {
+            return res.status(400).send(req.body.Username + 'already exists'); //If it exists, returns 400 error
+         } else {//If it does not, we create a new user with the information provided in the request body
+            Users
+               .create({
+                  Username: req.body.Username,
+                  Password: req.body.Password,
+                  Email: req.body.Email,
+                  Birthday: req.body.Birthday
+               })// '.create' is a mongoose command that takes a JSON object and executes on the specified MongoDB model
+                  //in this case, it is the 'user' schema
+               .then((user) =>{res.status(201).json(user) }) //response status and JSON document are then sent back to the client
+               .catch((error) => {
+                  console.error(error);
+                  res.status(500).send('Error: ' + error);
+               })
+         }
+      })
+      .catch((error) => {
+         console.error(error);
+         res.status(500).send('Error: ' + error);
+      });
+   });
 
 //6.  Allow users to update info
-app.put('/users/:name/:email', (req, res) => {
-   let user = users.find((user) => { return user.name === req.params.name})
-   //First, we are verifying the user to make sure they exist
-   if (user) {
-      user.email = req.params.email;
-      res.status(201).send('New email = ' + req.params.email);
-   } else {
-      res.status(404).send('Error');
-   }
+app.put('/users/:username/', (req, res) => {
+  Users.findOneAndUpdate({ username: req.params.username}, {
+   $set:
+      {
+         username: req.body.username,
+         password: req.body.password,
+         email: req.body.email,
+         birthday: req.body.birthday
+      }
+   },
+   { new: true }, //makes sure updated document is returned in next parameter
+   (err, updatedUser) => { //'updatedUser' represents the document that was just updated by $set
+      if(err) {
+         console.error(err);
+         res.status(500).send('Error: ' + err);
+      } else {
+         res.json(updatedUser);
+      }
+   });
 });
 
 //7.  Allow users to add a movie to their favorites
-app.post('/users/:name/movies', (req, res) => {
-   res.send('Successful POST request that adds a JSON object to the movie property under the defined user.')
+app.post('/users/:Username/movies/:Title', (req, res) => {
+   Users.findOneAndUpdate({Username: req.params.Username}, {
+      $push: {FavoriteMovies: req.params.Title},  //<-- Uses '$push' function to to add new movie ID to the end of the FavoriteMovies array
+   },
+   { new: true},
+   (err, updatedUser) => {
+      if (err) {
+         console.error(err);
+         res.status(500).send('Error: ' + err);
+      } else {
+         res.json(updatedUser);
+      }
+   });
 });
 
 //8.  Allow users to remove a movie from their favorites
-app.delete('/users/:name/movies/:title', (req, res) => {
-   res.send('Successful DELETE request that removes a JSON object defined by the title property within it')
+app.delete('/users/:Username/movies/:MovieID', (req, res) => {
+   Users.findOneAndUpdate({Username: req.params.Username}, {
+      $pull: {FavoriteMovies: req.params.MovieID},  //<-- Uses '$push' function to remove a new movie ID to the end of the FavoriteMovies array
+   },
+   { new: true},
+   (err, updatedUser) => {
+      if (err) {
+         console.error(err);
+         res.status(500).send('Error: ' + err);
+      } else {
+         res.json(updatedUser);
+      }
+   });
 });
 
+
 //9.  Allow existing users to deregister
-app.delete('/users/:name', (req, res) => {
-   res.send('Successful DELETE request that removes a user from the users array')
+app.delete('/users/:Username', (req, res) => {
+   Users.findOneAndRemove({Username: req.params.Username})
+      .then((user) => {
+         if(!user) {
+         res.status(400).send(req.params.Username + ' was not found');
+         } else {
+         res.status(200).send(req.params.Username + ' was deleted.');
+         }
+      })
+      .catch((err) => {
+         console.error(err);
+         res.status(500).send('Error: ' + err);
+      })
+});
+
+//    Return a list of all users
+app.get('/users', (req, res) => {
+   Users.find()
+      .then((users) => {
+         res.status(201).json(users)
+      })
+      .catch((error) => {
+         console.error(err);
+         res.status(500).send('Error' + error);
+      });
+})
+
+//    Return a user by username
+app.get('/users/:Username', (req, res) => {
+   Users.findOne({ Username: req.params.Username })
+      .then((user) => {
+         res.json(user);
+      })
+      .catch((error) => {
+         console.error(err);
+         res.status(500).send('Error: ' + err);
+      });
 });
 
 app.use(express.static('public'));

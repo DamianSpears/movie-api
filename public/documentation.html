@@ -53,7 +53,7 @@
          </tr>
          <tr>
             <td>Return data about a genre by style</td>
-            <td>/movies/genres/:name</td>
+            <td>/movies/genres/:style</td>
             <td>GET</td>
             <td>:style</td>
             <td>None</td>
@@ -77,7 +77,7 @@
          </tr>
          <tr>
             <td>Allow users to update user info</td>
-            <td>/users/:name/:email</td>
+            <td>/users/:Username/:email</td>
             <td>PUT</td>
             <td>:name, :email</td>
             <td>None</td>
@@ -85,23 +85,23 @@
          </tr>
          <tr>
             <td>Allow users to add a movie to favorites</td>
-            <td>/users/:name/movies</td>
+            <td>/users/:Username/FavoriteMovies/:MovieID</td>
             <td>POST</td>
-            <td>:name</td>
+            <td>:Uername, :MovieID</td>
             <td>A JSON object listing the new movie and information about movie</td>
             <td>A JSON object containing the movies saved by the user</td>
          </tr>
          <tr>
             <td>Allow users to remove a movie from favorites by title</td>
-            <td>/users/:name/movies/:title</td>
+            <td>/users/:Username/FavoriteMovies/:MovieId</td>
             <td>DELETE</td>
-            <td>:name, :title</td>
+            <td>:Username, :MovieID</td>
             <td>None</td>
             <td>A text confirming the movie was removed</td>
          </tr>
          <tr>
             <td>Allow existing users to deregister by name</td>
-            <td>/users/:name</td>
+            <td>/users/:Username</td>
             <td>DELETE</td>
             <td>:name</td>
             <td>None</td>
