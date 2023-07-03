@@ -116,50 +116,46 @@ app.put('/users/:username/', (req, res) => {
       {
          username: req.body.username,
          password: req.body.password,
-         email: req.body.email,
          birthday: req.body.birthday
       }
    },
-   { new: true }, //makes sure updated document is returned in next parameter
-   (err, updatedUser) => { //'updatedUser' represents the document that was just updated by $set
-      if(err) {
-         console.error(err);
-         res.status(500).send('Error: ' + err);
-      } else {
+   { new: true }) //makes sure updated document is returned in next parameter
+      .then(updatedUser => {
          res.json(updatedUser);
-      }
-   });
+      })
+      .catch(err => {
+         console.error(err)
+         res.status(500).send('Error: ' + err);
+      });
 });
 
 //7.  Allow users to add a movie to their favorites
-app.post('/users/:Username/movies/:Title', (req, res) => {
-   Users.findOneAndUpdate({Username: req.params.Username}, {
-      $push: {FavoriteMovies: req.params.Title},  //<-- Uses '$push' function to to add new movie ID to the end of the FavoriteMovies array
-   },
-   { new: true},
-   (err, updatedUser) => {
-      if (err) {
-         console.error(err);
-         res.status(500).send('Error: ' + err);
-      } else {
-         res.json(updatedUser);
-      }
-   });
+app.post('/users/:username/movies/:title', (req, res) => {
+   Users.findOneAndUpdate(
+   {username: req.params.username}, 
+   {$push: { favoriteMovies: req.params.title} },
+   { new: true })
+   .then(updatedUser => {
+      res.json(updatedUser);
+   })
+   .catch(err => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+   })
 });
 
 //8.  Allow users to remove a movie from their favorites
-app.delete('/users/:Username/movies/:MovieID', (req, res) => {
-   Users.findOneAndUpdate({Username: req.params.Username}, {
-      $pull: {FavoriteMovies: req.params.MovieID},  //<-- Uses '$push' function to remove a new movie ID to the end of the FavoriteMovies array
-   },
-   { new: true},
-   (err, updatedUser) => {
-      if (err) {
-         console.error(err);
-         res.status(500).send('Error: ' + err);
-      } else {
-         res.json(updatedUser);
-      }
+app.delete('/users/:username/movies/:title', (req, res) => {
+   Users.findOneAndUpdate(
+      {username: req.params.username},
+      {$pull: { favoriteMovies: req.params.title } },  //<-- Uses '$pull' function to remove a new movie ID to the end of the FavoriteMovies array
+      { new: true})
+   .then(updatedUser => {
+      res.json(updatedUser);
+   })
+   .catch(err => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
    });
 });
 
