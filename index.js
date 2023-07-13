@@ -6,20 +6,20 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const uuid = require('uuid');
 const mongoose = require('mongoose');
-const Models = require('./models.js');
+const Models = require('./models');
 const Movies = Models.Movie;
 const Users = Models.User;
 const { check, validationResult } = require('express-validator'); //allows for input validation on POST and PUT requests
 
-//mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology: true }); //links external database to index.js files using Mongoose
-mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true }); //links external database to index.js files using Mongoose
+mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology: true }); //links external database to index.js files using Mongoose
+//mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 //process.env.[variable] is a variable defined in heroku to like these API files to the MongoDB Atlas remote database
 
 app.use(bodyParser.json());
 
 const cors = require('cors');
 app.use(cors());
-let auth = require('./auth.js')(app); //using the 'app' arguement ensures Express is available in auth.js
+let auth = require('./auth')(app); //using the 'app' arguement ensures Express is available in auth.js
 const passport = require('passport');
 require('./passport.js'); //Passport is used in order to apply jwt.authenticate to the URL endpoints for authentication on certain requests
 
