@@ -11,8 +11,8 @@ const Movies = Models.Movie;
 const Users = Models.User;
 const { check, validationResult } = require('express-validator'); //allows for input validation on POST and PUT requests
 
-mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology: true }); //links external database to index.js files using Mongoose
-//mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology: true }); //links external database to index.js files using Mongoose
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 //process.env.[variable] is a variable defined in heroku to like these API files to the MongoDB Atlas remote database
 
 app.use(bodyParser.json());
