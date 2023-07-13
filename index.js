@@ -13,13 +13,13 @@ const { check, validationResult } = require('express-validator'); //allows for i
 
 //mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology: true }); //links external database to index.js files using Mongoose
 mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true }); //links external database to index.js files using Mongoose
-   //process.env.[variable] is a variable defined in heroku to like these API files to the MongoDB Atlas remote database
+//process.env.[variable] is a variable defined in heroku to like these API files to the MongoDB Atlas remote database
 
 app.use(bodyParser.json());
 
 const cors = require('cors');
 app.use(cors());
-const auth = require('./auth.js')(app); //using the 'app' arguement ensures Express is available in auth.js
+let auth = require('./auth.js')(app); //using the 'app' arguement ensures Express is available in auth.js
 const passport = require('passport');
 require('./passport.js'); //Passport is used in order to apply jwt.authenticate to the URL endpoints for authentication on certain requests
 
@@ -238,6 +238,6 @@ app.use((err, req, res, next) => {
 });
 
 const port = process.env.PORT || 8080; //this process looks for a pre-configured port number, if nothing is found it is set to a certain port number
-app.listen(port,'0.0.0.0',() => {
+app.listen(port, '0.0.0.0', () => {
    console.log('Listening on Port' + port);
 });
