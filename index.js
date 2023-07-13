@@ -238,7 +238,7 @@ app.use((err, req, res, next) => {
    res.status(500).send('An error has occured');
 });
 
-const port = process.env.PORT || 8080; //this process looks for a pre-configured port number, if nothing is found it is set to a certain port number
-app.listen(port, '0.0.0.0', () => {
-   console.log('Listening on Port' + port);
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`Listening on Port ` + port);
 });
