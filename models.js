@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-//Imports the 'mongoose' module
+const mongoose = require('mongoose');//Imports the 'mongoose' module
 const bcrypt = require('bcrypt'); //bcrypt is a module from npm that hashes passwords before being stored in a database
 
 //Defining the Schema below for documents in the "Movies" section
