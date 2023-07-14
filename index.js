@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 let express = require('express');
 //ONLY imports the express module into the js file
 const app = express();
@@ -10,6 +12,8 @@ const Models = require('./models');
 const Movies = Models.Movie;
 const Users = Models.User;
 const { check, validationResult } = require('express-validator'); //allows for input validation on POST and PUT requests
+const cors = require('cors');
+app.use(cors());
 
 //mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology: true }); //links external database to index.js files using Mongoose
 mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -17,22 +21,6 @@ mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifie
 
 
 app.use(bodyParser.json());
-
-const cors = require('cors');
-const allowedOrigins = '*';
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        // If a specific origin isn’t found on the list of allowed origins
-        const message = `The CORS policy for this application doesn't allow access from origin ${origin}`;
-        return callback(new Error(message), false);
-      }
-      return callback(null, true);
-    },
-  })
-);
 
 let auth = require('./auth')(app); //using the 'app' arguement ensures Express is available in auth.js
 const passport = require('passport');
