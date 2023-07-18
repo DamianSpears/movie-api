@@ -139,7 +139,7 @@ app.post('/users',
   });
 
 //6.  Allow users to update info
-app.put('/users/:username/',
+app.put('/users/:Username',
    [
    check('Username', 'Username is required').isLength({ min: 5 }), //The layout is the input field, then error, then requirements
    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
