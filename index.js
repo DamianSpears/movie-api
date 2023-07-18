@@ -13,17 +13,17 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 
-const { check, validationResult } = require('express-validator'); //allows for input validation on POST and PUT requests
+
 const cors = require('cors');
 app.use(cors());
 
-//mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology: true }); //links external database to index.js files using Mongoose
-mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology: true }); //links external database to index.js files using Mongoose
+//mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 //process.env.[variable] is a variable defined in heroku to link these API files to the MongoDB Atlas remote database
-
 
 app.use(bodyParser.json());
 
+const { check, validationResult } = require('express-validator'); //allows for input validation on POST and PUT requests
 let auth = require('./auth')(app); //using the 'app' arguement ensures Express is available in auth.js
 const passport = require('passport');
 require('./passport.js'); //Passport is used in order to apply jwt.authenticate to the URL endpoints for authentication on certain requests
@@ -98,49 +98,54 @@ app.get('/movies/:director', passport.authenticate('jwt', { session: false }), (
 
 //5.  Uses an HTTP request to collect info, populate the 'user' document, and hashes passwords in order to keep secure when storing in the non-relational database
 app.post('/users',
-   //Below is the validation logic for Username, Password and Email input fields
-   check('Username', 'Username is required').isLength({ min: 5 }), //The layout is the input field, then error, then requirements
-   check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
-   check('Password', 'Password is required').not().isEmpty,
-   check('Email', 'Email does not appear to be valid').isEmail(),
-   passport.authenticate('jwt', { session: false }), (req, res) => {
-      let errors = validationResult(req);
-      if (!errors.isEmpty()) {
-         return res.status(422).json({ errors: errors.array() }) //If any error occurs, this function sends a JSON object in an HTTP response
-      }
-      let hashedPassword = Users.hashPassword(req.body.Password); //This is taking the password from the request body and hasing it to use in the Users section of the 'then' method below
-      Users.findOne({ Username: req.body.Username }) //findOne searches to make sure username does not already exist in the "users" model
-         .then((user) => {
-            if (user) {
-               return res.status(400).send(req.body.Username + 'already exists'); //If it exists, returns 400 error
-            } else {//If it does not, we create a new user with the information provided in the request body
-               Users
-                  .create({
-                     Username: req.body.Username,
-                     Password: hashedPassword,
-                     Email: req.body.Email,
-                     Birthday: req.body.Birthday
-                  })// '.create' is a mongoose command that takes a JSON object and executes on the specified MongoDB model
-                  //in this case, it is the 'user' schema
-                  .then((user) => { res.status(201).json(user) }) //response status and JSON document are then sent back to the client
-                  .catch((error) => {
-                     console.error(error);
-                     res.status(500).send('Error: ' + error);
-                  })
-            }
-         })
-         .catch((error) => {
-            console.error(error);
-            res.status(500).send('Error: ' + error);
-         });
-   });
+  [
+    check('Username', 'Username is required').isLength({min: 5}), //The layout is the input field, then error, then requirements
+    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+  ]
+  ,(req, res) => {
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({errors: errors.array()}); //If any error occurs, this function sends a JSON object in an HTTP response
+    }
+
+    let hashedPassword = Users.hashPassword(req.body.Password); //This is taking the password from the request body and hasing it to use in the Users section of the 'then' method below
+    Users.findOne({ Username: req.body.Username }) //findOne searches to make sure username does not already exist in the "users" model
+      .then((user) => {
+        if (user) {
+          return res.status(400).send(req.body.Username + 'already exists'); //If it exists, returns 400 error
+        } else { //If it does not, we create a new user with the information provided in the request body
+          Users.create({
+              Username: req.body.Username,
+              Password: hashedPassword,
+              Email: req.body.Email,
+              Birthday: req.body.Birthday
+            }) // '.create' is a mongoose command that takes a JSON object and executes on the specified MongoDB model
+            //in this case, it is the 'user' schema
+            .then((user) => {
+              res.status(200).json(user)
+            }) //response status and JSON document are then sent back to the client
+            .catch((error) => {
+              console.error(error);
+              res.status(500).send('Error: ' + error);
+            });
+        }
+      }).catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+      });
+  });
 
 //6.  Allow users to update info
 app.put('/users/:username/',
+   [
    check('Username', 'Username is required').isLength({ min: 5 }), //The layout is the input field, then error, then requirements
    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
-   check('Password', 'Password is required').not().isEmpty,
+   check('Password', 'Password is required').not().isEmpty(),
    check('Email', 'Email does not appear to be valid').isEmail(),
+   ],
    passport.authenticate('jwt', { session: false }), (req, res) => {
       Users.findOneAndUpdate({ Username: req.params.Username }, {
          $set:
@@ -245,5 +250,5 @@ app.use((err, req, res, next) => {
 
 const port = process.env.PORT || 8080
 app.listen(port, '0.0.0.0', () => {
-  console.log(`Listening on Port ` + port);
+   console.log(`Listening on Port ` + port);
 });

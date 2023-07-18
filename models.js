@@ -18,12 +18,11 @@ let movieSchema = mongoose.Schema({
 
 //Defining the Schema below for documents in the "Users" section
 let userSchema = mongoose.Schema({
-   Username: { type: String, required: true },
-   Password: { type: String, required: true },
-   Email: { type: String },
-   Birthday: Date,
-   FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }]
-   //FavoriteMovies states there is a different collection to reference
+  Username: {type: String, required: true},
+  Password: {type: String, required: true},
+  Email: {type: String, required: true},
+  Birthday: Date,
+  FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }]
 });
 //The defined Schema has a series of keys and values that anticipate data related from the "users" collection
 
