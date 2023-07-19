@@ -1,84 +1,82 @@
-{
-   "movies": [
-      {
+{"Movies": [
+   {
       "Title": "Tenet",
       "Director": "Christopher Nolan",
       "Genre": {
          "Style": "Action",
          "Description": "fast-paced and include a lot of action like fight scenes, chase scenes, and slow-motion shots. They can feature superheroes, martial arts, or exciting stunts."
-         }
-      },
-      {
+      }
+   },
+   {
       "Title": "Inception",
       "Director": "Chrisopher Nolan",
       "Genre": {
          "Style": "Action",
          "Description": "fast-paced and include a lot of action like fight scenes, chase scenes, and slow-motion shots. They can feature superheroes, martial arts, or exciting stunts."
-         }
-      },
-      {
+      }
+   },
+   {
       "Title": "Reservoir Dogs",
       "Director": "Quentin Tarantino",
       "Genre": {
          "Style": "Crime",
          "Description": "Most crime drama focuses on crime investigation and does not feature the courtroom. Suspense and mystery are key elements that are nearly ubiquitous to the genre."
-         }
-      },
-      {
+      }
+   },
+   {
       "Title": "Django Unchained",
       "Director": "Quentin Tarantino",
       "Genre": {
          "Style": "Western",
          "Description": "Movies that are set in the American West, usually in the period from the 1850s to the end of the 19th century."
-         }
-      },
-      {
+      }
+   },
+   {
       "Title": "The Grand Budapest Hotel",
       "Director": "Wes Anderson",
       "Genre": {
          "Style": "Drama",
          "Description": "Stories with high stakes and many conflicts. They are plot-driven and demand that every character and scene move the story forward."
-         }
-      },
-      {
+      }
+   },
+   {
       "Title": "Pulp Fiction",
       "Director": "Quentin Tarantino",
       "Genre": {
          "Style": "Comedy",
          "Description": "Films designed to elicit laughter from the audience. Comedies are light-hearted dramas, crafted to amuse, entertain, and provoke enjoyment"
-         }
-      },
-      {
+      }
+   },
+   {
       "Title": "Mad Max: Fury Road",
       "Director": "George Miller",
       "Genre": {
          "Style": "Science Fiction",
          "Description": "genre of speculative fiction, which typically deals with imaginative and futuristic concepts such as advanced science and technology, space exploration, time travel, parallel universes, and extraterrestrial life"
-         }
-      },
-      {
+      }
+   },
+   {
       "Title": "Inception",
       "Director": "Christopher Nolan",
       "Genre": {
          "Style": "Science Fiction",
          "Description": "Speculative films, which typically deals with imaginative and futuristic concepts such as advanced science and technology, space exploration, time travel, parallel universes, and extraterrestrial life"
-         }
-      },
-      {
+      }
+   },
+   {
       "Title": "Goodfellas",
       "Director": "Martin Scorsese",
       "Genre": {
          "Style": "Crime",
          "Description": "Most crime drama focuses on crime investigation and does not feature the courtroom. Suspense and mystery are key elements that are nearly ubiquitous to the genre."
-         }
-      },
-      {
+      }
+   },
+   {
       "Title": "Shutter Island",
       "Director": "Martin Scorcese",
       "Genre": {
          "Style": "Thriller",
          "Description": "Thrillers are characterized and defined by the moods they elicit, giving their audiences heightened feelings of suspense, excitement, surprise, anticipation and anxiety."
-         }
       }
-   ]
-}
+   }
+]}

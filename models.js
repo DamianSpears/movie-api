@@ -1,20 +1,21 @@
 const mongoose = require('mongoose');//Imports the 'mongoose' module
 const bcrypt = require('bcrypt'); //bcrypt is a module from npm that hashes passwords before being stored in a database
 
+let genreSchema = mongoose.Schema({
+   Style: {type: String},
+   Description: {type: String}
+});
+
 //Defining the Schema below for documents in the "Movies" section
 let movieSchema = mongoose.Schema({
    Title: { type: String, required: true },
    //'required: true' means each document must include the key with the specified data type
    Director: { type: String },
-   Genre: [{
-      Style: String,
-      Description: String,
-   }],
+   Genre: [genreSchema],
    //'Genre' includes nested documents that include subdocuments of key-value pairs
 });
 //The defined Schema has a series of keys and values that anticipate data related from the "movies" collection
 //Values can be string, number, boolean, date, etc.
-
 
 //Defining the Schema below for documents in the "Users" section
 let userSchema = mongoose.Schema({

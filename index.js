@@ -237,6 +237,37 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
       });
 });
 
+//Add a new movie to the list
+app.post('/movies'
+  ,(req, res) => {
+    Movies.findOne({ Title: req.body.Title }) //findOne searches to make sure username does not already exist in the "users" model
+      .then((movie) => {
+        if (movie) {
+          return res.status(400).send(req.body.Title + 'already exists'); //If it exists, returns 400 error
+        } else { //If it does not, we create a new user with the information provided in the request body
+          Movies.create({
+              Title: req.body.Title,
+              Director: req.body.Director,
+              Genre: [{
+               Style: req.body.Genre.Style,
+               Description: req.body.Genre.Description
+               }]
+            }) // '.create' is a mongoose command that takes a JSON object and executes on the specified MongoDB model
+            //in this case, it is the 'user' schema
+            .then((movie) => {
+              res.status(200).json(movie)
+            }) //response status and JSON document are then sent back to the client
+            .catch((error) => {
+              console.error(error);
+              res.status(500).send('Error: ' + error);
+            });
+        }
+      }).catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+      });
+  });
+
 
 
 app.use(express.static('public'));
