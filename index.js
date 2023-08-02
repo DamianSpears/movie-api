@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 
 //These are a series of middleware functions that occur between the HTTP request and response
 //1.  Return list of all movies
-app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.get('/movies', (req, res) => {
    Movies.find()
       .then((movies) => {
          res.status(201).json(movies);
