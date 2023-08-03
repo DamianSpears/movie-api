@@ -198,7 +198,7 @@ app.delete('/users/:username/movies/:title', passport.authenticate('jwt', { sess
 
 
 //9.  Allow existing users to deregister
-app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.delete('/users/:Username', (req, res) => {
    Users.findOneAndRemove({ Username: req.params.Username })
       .then((user) => {
          if (!user) {
@@ -214,7 +214,7 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
 });
 
 //    Return a list of all users
-app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.get('/users', (req, res) => {
    Users.find()
       .then((users) => {
          res.status(201).json(users)
@@ -269,13 +269,13 @@ app.post('/movies'
       Movies.findOne({ Title: req.body.Title }) //findOne searches to make sure username does not already exist in the "users" model
          .then((movie) => {
             if (movie) {
-               return res.status(400).send(req.body.Title + 'already exists'); //If it exists, returns 400 error
+               return res.status(400).send(req.body.Title + ' already exists'); //If it exists, returns 400 error
             } else { //If it does not, we create a new user with the information provided in the request body
                Movies.create({
                   Title: req.body.Title,
                   Director: req.body.Director,
                   Description: req.body.Description,
-                  Image: req.body.Image,
+                  ImagePath: req.body.Image,
                   Genre: {
                      Style: req.body.Genre.Style,
                      Description: req.body.Genre.Description
@@ -294,6 +294,22 @@ app.post('/movies'
             console.error(error);
             res.status(500).send('Error: ' + error);
          });
+   });
+
+// Delete a movie from the list
+   app.delete('/movies/:Title', (req, res) => {
+      Movies.findOneAndRemove({ Title: req.params.Title })
+         .then((movie) => {
+            if (!movie) {
+               res.status(400).send(req.params.Title + ' was not found');
+            } else {
+               res.status(200).send(req.params.Title + ' was deleted.');
+            }
+         })
+         .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+         })
    });
 
 app.use(express.static('public'));
