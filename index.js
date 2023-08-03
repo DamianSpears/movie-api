@@ -98,53 +98,53 @@ app.get('/movies/:director', passport.authenticate('jwt', { session: false }), (
 
 //5.  Uses an HTTP request to collect info, populate the 'user' document, and hashes passwords in order to keep secure when storing in the non-relational database
 app.post('/users',
-  [
-    check('Username', 'Username is required').isLength({min: 5}), //The layout is the input field, then error, then requirements
-    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
-    check('Password', 'Password is required').not().isEmpty(),
-    check('Email', 'Email does not appear to be valid').isEmail()
-  ]
-  ,(req, res) => {
-    let errors = validationResult(req);
+   [
+      check('Username', 'Username is required').isLength({ min: 5 }), //The layout is the input field, then error, then requirements
+      check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+      check('Password', 'Password is required').not().isEmpty(),
+      check('Email', 'Email does not appear to be valid').isEmail()
+   ]
+   , (req, res) => {
+      let errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      return res.status(422).json({errors: errors.array()}); //If any error occurs, this function sends a JSON object in an HTTP response
-    }
+      if (!errors.isEmpty()) {
+         return res.status(422).json({ errors: errors.array() }); //If any error occurs, this function sends a JSON object in an HTTP response
+      }
 
-    let hashedPassword = Users.hashPassword(req.body.Password); //This is taking the password from the request body and hasing it to use in the Users section of the 'then' method below
-    Users.findOne({ Username: req.body.Username }) //findOne searches to make sure username does not already exist in the "users" model
-      .then((user) => {
-        if (user) {
-          return res.status(400).send(req.body.Username + 'already exists'); //If it exists, returns 400 error
-        } else { //If it does not, we create a new user with the information provided in the request body
-          Users.create({
-              Username: req.body.Username,
-              Password: hashedPassword,
-              Email: req.body.Email,
-              Birthday: req.body.Birthday
-            }) // '.create' is a mongoose command that takes a JSON object and executes on the specified MongoDB model
-            //in this case, it is the 'user' schema
-            .then((user) => {
-              res.status(200).json(user)
-            }) //response status and JSON document are then sent back to the client
-            .catch((error) => {
-              console.error(error);
-              res.status(500).send('Error: ' + error);
-            });
-        }
-      }).catch((error) => {
-        console.error(error);
-        res.status(500).send('Error: ' + error);
-      });
-  });
+      let hashedPassword = Users.hashPassword(req.body.Password); //This is taking the password from the request body and hasing it to use in the Users section of the 'then' method below
+      Users.findOne({ Username: req.body.Username }) //findOne searches to make sure username does not already exist in the "users" model
+         .then((user) => {
+            if (user) {
+               return res.status(400).send(req.body.Username + 'already exists'); //If it exists, returns 400 error
+            } else { //If it does not, we create a new user with the information provided in the request body
+               Users.create({
+                  Username: req.body.Username,
+                  Password: hashedPassword,
+                  Email: req.body.Email,
+                  Birthday: req.body.Birthday
+               }) // '.create' is a mongoose command that takes a JSON object and executes on the specified MongoDB model
+                  //in this case, it is the 'user' schema
+                  .then((user) => {
+                     res.status(200).json(user)
+                  }) //response status and JSON document are then sent back to the client
+                  .catch((error) => {
+                     console.error(error);
+                     res.status(500).send('Error: ' + error);
+                  });
+            }
+         }).catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+         });
+   });
 
 //6.  Allow users to update info
 app.put('/users/:Username',
    [
-   check('Username', 'Username is required').isLength({ min: 5 }), //The layout is the input field, then error, then requirements
-   check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
-   check('Password', 'Password is required').not().isEmpty(),
-   check('Email', 'Email does not appear to be valid').isEmail(),
+      check('Username', 'Username is required').isLength({ min: 5 }), //The layout is the input field, then error, then requirements
+      check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+      check('Password', 'Password is required').not().isEmpty(),
+      check('Email', 'Email does not appear to be valid').isEmail(),
    ],
    passport.authenticate('jwt', { session: false }), (req, res) => {
       Users.findOneAndUpdate({ Username: req.params.Username }, {
@@ -237,38 +237,64 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
       });
 });
 
-//Add a new movie to the list
-app.post('/movies'
-  ,(req, res) => {
-    Movies.findOne({ Title: req.body.Title }) //findOne searches to make sure username does not already exist in the "users" model
-      .then((movie) => {
-        if (movie) {
-          return res.status(400).send(req.body.Title + 'already exists'); //If it exists, returns 400 error
-        } else { //If it does not, we create a new user with the information provided in the request body
-          Movies.create({
-              Title: req.body.Title,
-              Director: req.body.Director,
-              Genre: [{
+// Update movie information
+app.put('/movies/:Title',
+   (req, res) => {
+      Users.findOneAndUpdate({ Title: req.params.Title }, {
+         $set:
+         {
+            Title: req.body.Title,
+            Director: req.body.Director,
+            Description: req.body.Description,
+            Image: req.body.Image,
+            Genre: {
                Style: req.body.Genre.Style,
                Description: req.body.Genre.Description
-               }]
-            }) // '.create' is a mongoose command that takes a JSON object and executes on the specified MongoDB model
-            //in this case, it is the 'user' schema
-            .then((movie) => {
-              res.status(200).json(movie)
-            }) //response status and JSON document are then sent back to the client
-            .catch((error) => {
-              console.error(error);
-              res.status(500).send('Error: ' + error);
-            });
-        }
-      }).catch((error) => {
-        console.error(error);
-        res.status(500).send('Error: ' + error);
-      });
-  });
+            }
+         }
+      },
+         { new: true }) //makes sure updated document is returned in next parameter
+         .then(updatedMovie => {
+            res.json(updatedMovie);
+         })
+         .catch(err => {
+            console.error(err)
+            res.status(500).send('Error: ' + err);
+         });
+   });
 
-
+// Add a new movie to the list
+app.post('/movies'
+   , (req, res) => {
+      Movies.findOne({ Title: req.body.Title }) //findOne searches to make sure username does not already exist in the "users" model
+         .then((movie) => {
+            if (movie) {
+               return res.status(400).send(req.body.Title + 'already exists'); //If it exists, returns 400 error
+            } else { //If it does not, we create a new user with the information provided in the request body
+               Movies.create({
+                  Title: req.body.Title,
+                  Director: req.body.Director,
+                  Description: req.body.Description,
+                  Image: req.body.Image,
+                  Genre: {
+                     Style: req.body.Genre.Style,
+                     Description: req.body.Genre.Description
+                  }
+               }) // '.create' is a mongoose command that takes a JSON object and executes on the specified MongoDB model
+                  //in this case, it is the 'user' schema
+                  .then((movie) => {
+                     res.status(200).json(movie)
+                  }) //response status and JSON document are then sent back to the client
+                  .catch((error) => {
+                     console.error(error);
+                     res.status(500).send('Error: ' + error);
+                  });
+            }
+         }).catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+         });
+   });
 
 app.use(express.static('public'));
 //since documentation.html is only file, this will load the public folder and display documentation.html.
