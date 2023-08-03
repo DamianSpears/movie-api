@@ -246,7 +246,7 @@ app.put('/movies/:Title',
             Title: req.body.Title,
             Director: req.body.Director,
             Description: req.body.Description,
-            Image: req.body.Image,
+            ImagePath: req.body.Image,
             Genre: {
                Style: req.body.Genre.Style,
                Description: req.body.Genre.Description

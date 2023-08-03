@@ -11,8 +11,11 @@ let movieSchema = mongoose.Schema({
    Title: { type: String, required: true },
    //'required: true' means each document must include the key with the specified data type
    Director: { type: String },
+   Description: {type: String},
+   ImagePath: {type: String},
    Genre: [genreSchema],
    //'Genre' includes nested documents that include subdocuments of key-value pairs
+
 });
 //The defined Schema has a series of keys and values that anticipate data related from the "movies" collection
 //Values can be string, number, boolean, date, etc.
