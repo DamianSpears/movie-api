@@ -275,7 +275,7 @@ app.post('/movies'
                   Title: req.body.Title,
                   Director: req.body.Director,
                   Description: req.body.Description,
-                  ImagePath: req.body.Image,
+                  ImagePath: req.body.ImagePath,
                   Genre: {
                      Style: req.body.Genre.Style,
                      Description: req.body.Genre.Description
