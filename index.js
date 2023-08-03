@@ -240,7 +240,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 // Update movie information
 app.put('/movies/:Title',
    (req, res) => {
-      Users.findOneAndUpdate({ Title: req.params.Title }, {
+      Movies.findOneAndUpdate({ Title: req.params.Title }, {
          $set:
          {
             Title: req.body.Title,
