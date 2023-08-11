@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 
 //These are a series of middleware functions that occur between the HTTP request and response
 //1.  Return list of all movies
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
    Movies.find()
       .then((movies) => {
          res.status(201).json(movies);
@@ -104,7 +104,7 @@ app.post('/users',
       check('Password', 'Password is required').not().isEmpty(),
       check('Email', 'Email does not appear to be valid').isEmail()
    ]
-   , (req, res) => {
+   , passport.authenticate('jwt', { session: false }), (req, res) => {
       let errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -198,7 +198,7 @@ app.delete('/users/:username/movies/:title', passport.authenticate('jwt', { sess
 
 
 //9.  Allow existing users to deregister
-app.delete('/users/:Username', (req, res) => {
+app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
    Users.findOneAndRemove({ Username: req.params.Username })
       .then((user) => {
          if (!user) {
@@ -238,7 +238,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 });
 
 // Update movie information
-app.put('/movies/:Title',
+app.put('/movies/:Title', passport.authenticate('jwt', { session: false }),
    (req, res) => {
       Movies.findOneAndUpdate({ Title: req.params.Title }, {
          $set:
@@ -264,7 +264,7 @@ app.put('/movies/:Title',
    });
 
 // Add a new movie to the list
-app.post('/movies'
+app.post('/movies', passport.authenticate('jwt', { session: false })
    , (req, res) => {
       Movies.findOne({ Title: req.body.Title }) //findOne searches to make sure username does not already exist in the "users" model
          .then((movie) => {
@@ -297,7 +297,7 @@ app.post('/movies'
    });
 
 // Delete a movie from the list
-   app.delete('/movies/:Title', (req, res) => {
+   app.delete('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
       Movies.findOneAndRemove({ Title: req.params.Title })
          .then((movie) => {
             if (!movie) {
