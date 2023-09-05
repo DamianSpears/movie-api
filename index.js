@@ -185,7 +185,7 @@ app.post('/users/:username/movies/:title', passport.authenticate('jwt', { sessio
 app.delete('/users/:username/movies/:title', passport.authenticate('jwt', { session: false }), (req, res) => {
    Users.findOneAndUpdate(
       { Username: req.params.username },
-      { $pull: { favoriteMovies: req.params.title } },  //<-- Uses '$pull' function to remove a new movie ID to the end of the FavoriteMovies array
+      { $pull: { FavoriteMovies: req.params.title } },  //<-- Uses '$pull' function to remove a new movie ID to the end of the FavoriteMovies array
       { new: true })
       .then(updatedUser => {
          res.json(updatedUser);
